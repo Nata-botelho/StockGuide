@@ -1,5 +1,5 @@
 ﻿using RestSharp;
-using StockGuide.Domain.Services.Interfaces;
+using StockGuide.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,7 +11,7 @@ using System.Text.Json;
 using StockGuide.Application.Model.Dtos;
 using Newtonsoft.Json;
 
-namespace StockGuide.Domain.Services
+namespace StockGuide.Services
 {
     public class StockService : IStockService
     {

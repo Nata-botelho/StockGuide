@@ -1,11 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using StockGuide.Domain.Services;
-using StockGuide.Domain.Services.Interfaces;
-using RestSharp;
+using StockGuide.Services.Interfaces;
 using StockGuide.Application.Model.Dtos;
 
 namespace StockGuide.Controllers

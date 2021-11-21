@@ -14,8 +14,6 @@
   <ItemGroup>
     <Folder Include="Infrastrucuture\IoC\" />
     <Folder Include="Infrastrucuture\Repository\" />
-    <Folder Include="Application\Model\Entities\" />
-    <Folder Include="Application\Model\ModelView\" />
   </ItemGroup>
 
 </Project>
