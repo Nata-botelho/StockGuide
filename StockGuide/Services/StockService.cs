@@ -10,19 +10,24 @@ using System.Text.Json.Serialization;
 using System.Text.Json;
 using StockGuide.Application.Model.Dtos;
 using Newtonsoft.Json;
+using StockGuide.Shared.Enums;
+using StockGuide.Shared.Extensions;
+using StockGuide.Application.Model.Dtos.Base;
 
 namespace StockGuide.Services
 {
     public class StockService : IStockService
     {
         private readonly string apiKey;
+        private readonly StockCalculator _stockCalculator;
 
-        public StockService()
+        public StockService(StockCalculator stockCalculator)
         {
             this.apiKey = Environment.GetEnvironmentVariable("AV_API_KEY");
+            _stockCalculator = stockCalculator;
         }
 
-        public DailyStockHistory GetStockBySymbol(string symbol)
+        public DailyStockHistory GetDailyStockBySymbol(string symbol)
         {
             if (String.IsNullOrEmpty(apiKey))
                 throw new Exception("Api Key not found");
@@ -39,6 +44,23 @@ namespace StockGuide.Services
             return System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, dynamic>>(StockService.DoRequest(queryUrl));
         }
 
+        public T GetAvarage<T, S>(string symbol, AverageRequestIntervalEnum interval, AverageTypesEnum averageType, int timePeriod)
+            where T : BaseAverageDto<S> where S : BaseAverageOnTime
+        {
+            string queryUrl = "https://" + $@"www.alphavantage.co/query?function={averageType}&symbol={symbol}&interval={interval.ToDescriptionString()}&time_period={timePeriod}&series_type=closed&apikey={apiKey}";
+
+            return JsonConvert.DeserializeObject<T>(DoRequest(queryUrl));
+        }
+
+        public double[] GetReturnHistory(string symbol)
+        {
+            var history = GetDailyStockBySymbol(symbol);
+
+            var historicClosedValues = GetDoubleArray(history).Reverse().ToArray();
+
+            return _stockCalculator.GetHistoricalReturnPercentage(historicClosedValues);
+        }
+
         private static string DoRequest(string queryUrl)
         {
             Uri queryUri = new(queryUrl);
@@ -47,6 +69,15 @@ namespace StockGuide.Services
             {
                 return client.DownloadString(queryUri);
             }
+        }
+
+        private static double[] GetDoubleArray(DailyStockHistory stockHistory)
+        {
+            double[] closedHistory = new double[stockHistory.TimeSeries.Count];
+
+            closedHistory = stockHistory.TimeSeries.Values.Select(p => p.Close).ToArray();
+
+            return closedHistory;
         }
     }
 }
