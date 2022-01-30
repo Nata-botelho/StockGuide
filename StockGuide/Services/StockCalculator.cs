@@ -17,5 +17,10 @@ namespace StockGuide.Services
 
             return historicalReturnArray.Reverse().ToArray();
         }
+        
+        public double GetReturnAveragePercentage(double[] values)
+        {
+            return GetHistoricalReturnPercentage(values).Average();
+        }
     }
 }

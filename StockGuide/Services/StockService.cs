@@ -39,7 +39,7 @@ namespace StockGuide.Services
 
         public Dictionary<string, dynamic> SearchSymbol(string symbol)
         {
-            string queryUrl = "https://" + $@"www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords={symbol}&apikey={apiKey}";
+            string queryUrl = "https://" + $@"www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords={symbol}&apikey=7NWO82CA6FDESJKV";
 
             return System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, dynamic>>(StockService.DoRequest(queryUrl));
         }
@@ -59,6 +59,12 @@ namespace StockGuide.Services
             var historicClosedValues = GetDoubleArray(history).Reverse().ToArray();
 
             return _stockCalculator.GetHistoricalReturnPercentage(historicClosedValues);
+        }
+
+        public double GetReturnAverage(string symbol)
+        {
+            double[] history = GetReturnHistory(symbol);
+            return _stockCalculator.GetReturnAveragePercentage(history);
         }
 
         private static string DoRequest(string queryUrl)
